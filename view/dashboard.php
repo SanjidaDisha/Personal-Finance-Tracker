@@ -24,22 +24,22 @@ $username = htmlspecialchars($_SESSION['username'] ?? 'User'); // fallback usern
   <div class="user">
     <span id="welcomeUser">Welcome, <?= $username ?></span>
     <form method="POST" action="../controller/logoutController.php" style="display:inline;">
-      <button type="submit" name="logout" class="profile-btn" title="Logout">🚪</button>
+      <button type="submit" name="logout" class="profile-btn" title="Logout">Log Out</button>
     </form>
   </div>
 </header>
 
 <nav class="nav-links">
-  <a href="#">Expense Categories</a>
-  <a href="#">Income Recording</a>
-  <a href="#">Budget Goals</a>
-  <a href="#">Bill Reminders</a>
+  <a href="expenseCategories.php">Expense Categories</a>
+  <a href="income_recording.php">Income Recording</a>
+  <a href="budgetGoals.php">Budget Goals</a>
+  <a href="billReminders.php">Bill Reminders</a>
   <a href="#">Reports/Graphs</a>
   <a href="#">Account Linking</a>
   <a href="#">Debt Tracking</a>
   <a href="#">Savings Goals</a>
   <a href="#">Tax Categories</a>
-  <a href="#">Export Data</a>
+  <a href="exportWizard.php">Export Data</a>
 </nav>
 
 <main class="dashboard">
