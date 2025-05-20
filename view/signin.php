@@ -1,7 +1,7 @@
 <?php
 session_start();
 if (isset($_SESSION['user_id'])) {
-  header('Location:../view/dashboard.php'); // Redirect logged-in users
+  header('Location:../view/Dashboard.php'); // Redirect logged-in users
   exit;
 }
 ?>
