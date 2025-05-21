@@ -30,16 +30,23 @@ $username = htmlspecialchars($_SESSION['username'] ?? 'User'); // fallback usern
 </header>
 
 <nav class="nav-links">
+
+  <a href="landing-page.php">Home</a>
+  <a href="ProfileManagement.php">Profile</a>
+ <a href="reports.php">Reports/Graphs</a>
+  <a href="account-linking.php">Account Linking</a>
+  <a href="debt-tracking.php">Debt Tracking</a>
+  <a href="savings-goals.php">Savings Goals</a>
+  <a href="tax-categories.php">Tax Categories</a>
+  <a href="#">Export Data</a>
+
   <a href="expenseCategories.php">Expense Categories</a>
   <a href="income_recording.php">Income Recording</a>
   <a href="budgetGoals.php">Budget Goals</a>
   <a href="billReminders.php">Bill Reminders</a>
-  <a href="#">Reports/Graphs</a>
-  <a href="#">Account Linking</a>
-  <a href="#">Debt Tracking</a>
-  <a href="#">Savings Goals</a>
-  <a href="#">Tax Categories</a>
+  
   <a href="exportWizard.php">Export Data</a>
+
 </nav>
 
 <main class="dashboard">
