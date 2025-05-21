@@ -12,6 +12,6 @@ if (isset($_COOKIE[session_name()])) {
 }
 
 // Redirect to login page after logout
-header('Location: ../view/Login.php'); // Adjust path if needed
+header('Location: ../view/signin.php'); // Adjust path if needed
 exit();
 ?>
