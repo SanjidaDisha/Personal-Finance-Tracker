@@ -1,29 +1,39 @@
 <?php
 session_start();
 
-// Auth check
-if (!isset($_SESSION['user_email'])) {
-    header("Location: ../view/signin.php");
-    exit;
-}
-
+// Mock download and encryption logic for now
 $errors = [];
 $success = "";
 
-// Handle export logic
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $exportType = $_POST['export-type'] ?? '';
-    $schedule = $_POST['backup-schedule'] ?? 'none';
+    $type = $_POST['export_type'] ?? '';
+    $schedule = $_POST['schedule'] ?? 'none';
     $encrypt = $_POST['encrypt'] ?? 'no';
 
-    if (!$exportType) {
-        $errors[] = "Export type is required.";
+    // Simple validation
+    if ($type === '') {
+        $errors[] = "Please select an export format.";
     }
 
     if (empty($errors)) {
-        $success = "Export prepared successfully with schedule: $schedule and encryption: $encrypt";
-        // Here you can simulate or trigger the export logic
+        // Create a fake filename
+        $filename = "export_" . date("Ymd_His") . "." . $type;
+        if ($encrypt === 'yes') {
+            $filename .= ".enc";
+        }
+
+        // In a real app, you’d generate and store/export file here.
+        $success = "Export scheduled successfully as <strong>$filename</strong> with " .
+                   ($encrypt === 'yes' ? "encryption" : "no encryption") .
+                   ($schedule !== 'none' ? ", scheduled $schedule." : ".");
     }
+
+    // Pass results back to the view
+    $_SESSION['export_result'] = [
+        'errors' => $errors,
+        'success' => $success
+    ];
 }
 
-include "../view/exportWizard.php";
+header("Location: ../view/exportWizard.php");
+exit;

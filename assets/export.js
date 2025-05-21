@@ -1,28 +1,32 @@
-// Tab switching
-document.querySelectorAll('nav.tabs button').forEach(btn => {
-    btn.addEventListener('click', () => {
-        document.querySelectorAll('nav.tabs button').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
+document.addEventListener('DOMContentLoaded', () => {
+  const tabs = document.querySelectorAll('nav.tabs button');
+  const sections = document.querySelectorAll('.tab-content');
+  const typeError = document.getElementById('type-error');
+  const form = document.getElementById('export-form');
 
-        document.querySelectorAll('.tab-content').forEach(sec => sec.classList.remove('active'));
-        document.getElementById(btn.dataset.tab).classList.add('active');
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+
+      sections.forEach(sec => {
+        sec.classList.remove('active');
+        if (sec.id === tab.dataset.tab) {
+          sec.classList.add('active');
+        }
+      });
     });
-});
+  });
 
-// Form validation
-document.getElementById('export-form').addEventListener('submit', function (e) {
-    const exportType = document.getElementById('export-type');
-    const typeError = document.getElementById('type-error');
-    let valid = true;
-
-    if (!exportType.value) {
-        typeError.style.display = 'block';
-        valid = false;
-    } else {
-        typeError.style.display = 'none';
-    }
-
-    if (!valid) {
+  if (form) {
+    form.addEventListener('submit', (e) => {
+      const exportType = document.getElementById('export_type');
+      if (!exportType.value) {
         e.preventDefault();
-    }
+        typeError.style.display = 'block';
+      } else {
+        typeError.style.display = 'none';
+      }
+    });
+  }
 });

@@ -34,15 +34,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Successful login: store user info in session (you can customize this)
-   // ✅ Store full user info in session
-    $_SESSION['user'] = $user;
+    $_SESSION['user'] = [
+        'email' => $user['email'],
+        'username' => $user['username'],
+    ];
 
-    // Optional: store separate variables too
-    $_SESSION['username'] = $user['username'];
-    $_SESSION['email'] = $user['email'];
-    $_SESSION['gender'] = $user['gender'];
-    $_SESSION['country'] = $user['country'];
-    $_SESSION['dob'] = $user['dob'];
     // Handle "remember me"
     if (isset($_POST['remember'])) {
         setcookie('remember_me', $user['email'], time() + (86400 * 30), "/"); // 30 days
