@@ -24,12 +24,13 @@ $username = htmlspecialchars($_SESSION['username'] ?? 'User'); // fallback usern
   <div class="user">
     <span id="welcomeUser">Welcome, <?= $username ?></span>
     <form method="POST" action="../controller/logoutController.php" style="display:inline;">
-      <button type="submit" name="logout" class="profile-btn" title="Logout">🚪</button>
+      <button type="submit" name="logout" class="profile-btn" title="Logout">Log Out</button>
     </form>
   </div>
 </header>
 
 <nav class="nav-links">
+<<<<<<< HEAD
   <a href="landing-page.php">Home</a>
   <a href="Profile management.php">Profile</a>
   <a href="#">Expense Categories</a>
@@ -42,6 +43,18 @@ $username = htmlspecialchars($_SESSION['username'] ?? 'User'); // fallback usern
   <a href="savings-goals.php">Savings Goals</a>
   <a href="tax-categories.php">Tax Categories</a>
   <a href="#">Export Data</a>
+=======
+  <a href="expenseCategories.php">Expense Categories</a>
+  <a href="income_recording.php">Income Recording</a>
+  <a href="budgetGoals.php">Budget Goals</a>
+  <a href="billReminders.php">Bill Reminders</a>
+  <a href="#">Reports/Graphs</a>
+  <a href="#">Account Linking</a>
+  <a href="#">Debt Tracking</a>
+  <a href="#">Savings Goals</a>
+  <a href="#">Tax Categories</a>
+  <a href="exportWizard.php">Export Data</a>
+>>>>>>> c86e250325d45022cc362fb22cce5e14907c68ca
 </nav>
 
 <main class="dashboard">
