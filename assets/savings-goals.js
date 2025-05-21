@@ -1,73 +1,36 @@
 function showScreen(id) {
-      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-      document.getElementById(id).classList.add('active');
-    }
+  document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
 
-    function addGoal() {
-      const name = document.getElementById('newGoalName').value;
-      const target = +document.getElementById('newGoalTarget').value;
-      const saved = +document.getElementById('newGoalSaved').value;
-      const due = document.getElementById('newGoalDate').value;
+function validateGoalForm() {
+  const name = document.getElementById("newGoalName").value.trim();
+  const target = parseFloat(document.getElementById("newGoalTarget").value);
+  const saved = parseFloat(document.getElementById("newGoalSaved").value);
+  const date = new Date(document.getElementById("newGoalDate").value);
+  const today = new Date();
 
-      if (!name || !target || isNaN(saved)) return;
+  if (name.length < 3) {
+    alert("Goal name must be at least 3 characters.");
+    return false;
+  }
 
-      const percent = Math.min(100, (saved / target * 100).toFixed(1));
-      const goalDiv = document.createElement('div');
-      goalDiv.className = 'goal-card';
-      goalDiv.innerHTML = `
-        <button class="delete-btn" onclick="this.parentElement.remove()">X</button>
-        <strong>${name}</strong><br>
-        Saved: $${saved} / $${target} (${percent}%)<br>
-        Due: ${due}<br>
-        <div class="goal-bar"><div class="goal-bar-fill" style="width:${percent}%"></div></div>
-      `;
-      document.getElementById('goalList').appendChild(goalDiv);
+  if (isNaN(target) || target <= 0) {
+    alert("Target amount must be a positive number.");
+    return false;
+  }
 
-      document.getElementById('newGoalName').value = '';
-      document.getElementById('newGoalTarget').value = '';
-      document.getElementById('newGoalSaved').value = '';
-      document.getElementById('newGoalDate').value = '';
-    }
+  if (isNaN(saved) || saved < 0 || saved > target) {
+    alert("Saved amount must be non-negative and less than or equal to the target.");
+    return false;
+  }
 
-    function estimateGoalDate() {
-      const target = +document.getElementById('planTarget').value;
-      const amount = +document.getElementById('planAmount').value;
-      const freq = +document.getElementById('planFreq').value;
+  if (isNaN(date.getTime()) || date <= today) {
+    alert("Due date must be a valid future date.");
+    return false;
+  }
 
-      if (!target || !amount || !freq) return;
-      const totalDays = Math.ceil((target / amount) * freq);
-      const endDate = new Date();
-      endDate.setDate(endDate.getDate() + totalDays);
+  return true;
+}
 
-      document.getElementById('planResult').textContent =
-        `Estimated goal completion date: ${endDate.toDateString()}`;
-    }
-
-    function addMilestone() {
-      const text = document.getElementById('milestoneText').value;
-      const date = document.getElementById('milestoneDate').value;
-      if (!text || !date) return;
-
-      const div = document.createElement('div');
-      div.className = 'milestone';
-      div.innerHTML = `
-        <button class="delete-btn" onclick="this.parentElement.remove()">X</button>
-        <strong>${text}</strong><br>
-        🎉 Achieved on ${date}
-      `;
-      document.getElementById('milestoneList').appendChild(div);
-
-      document.getElementById('milestoneText').value = '';
-      document.getElementById('milestoneDate').value = '';
-    }
-
-    // Hamburger toggle
-    const hamburger = document.getElementById('hamburger');
-    const navLinks = document.getElementById('navLinks');
-    const icon = hamburger.querySelector('i');
-
-    hamburger.addEventListener('click', () => {
-      navLinks.classList.toggle('show');
-      icon.classList.toggle('fa-bars');
-      icon.classList.toggle('fa-times');
-    });
+// Extra functions like estimateGoalDate and addMilestone can be defined below

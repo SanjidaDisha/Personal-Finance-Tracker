@@ -7,7 +7,6 @@
       icon.classList.toggle('fa-bars');
       icon.classList.toggle('fa-times');
     });
-
     // Section switch
     function showScreen(id) {
       document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));

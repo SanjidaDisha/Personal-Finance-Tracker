@@ -29,7 +29,7 @@ $username = htmlspecialchars($_SESSION['username'] ?? 'User'); // fallback usern
     <nav class="nav-links" id="navLinks">
       <a href="landing-page.php">Home</a>
       <a href="dashboard.php">Dashboard</a>
-      <a href="Profile management.php">Profile</a>
+      <a href="ProfileManagement.php">Profile</a>
       <a href="savings-goals.php">Savings</a>
       <a href="debt-tracking.php">Debt</a>
       <a href="tax-categories.php">Tax</a>

@@ -39,7 +39,7 @@ foreach ($deductions as $ded) {
     <nav class="nav-links" id="navLinks">
       <a href="landing-page.php">Home</a>
       <a href="Dashboard.php">Dashboard</a>
-      <a href="Profile management.php">Profile</a>
+      <a href="ProfileManagement.php">Profile</a>
       <a href="debt-tracking.php">Debt</a>
       <a href="account-linking.php">Accounts</a>
       <a href="reports.php">Reports</a>

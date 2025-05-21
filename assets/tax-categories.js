@@ -1,4 +1,4 @@
-// Navbar toggle for mobile
+/ Navbar toggle for mobile
     function toggleNav() {
       const nav = document.getElementById("topNav");
       nav.className = nav.className === "topnav" ? "topnav responsive" : "topnav";

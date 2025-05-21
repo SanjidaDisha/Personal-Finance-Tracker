@@ -6,7 +6,17 @@ if (!isset($_SESSION['user'])) {
     header('Location:../view/signin.php');
     exit;
 }
-$username = htmlspecialchars($_SESSION['username'] ?? 'User'); // fallback username
+$user = $_SESSION['user'];
+$username = htmlspecialchars($user['username'] ?? 'User');
+$email = htmlspecialchars($user['email'] ?? 'user@example.com');
+$gender = htmlspecialchars($user['gender'] ?? 'Other');
+$country = htmlspecialchars($user['country'] ?? 'Unknown');
+$dob = htmlspecialchars($user['dob'] ?? '2000-01-01');
+
+// Calculate age
+$today = new DateTime();
+$birthDate = new DateTime($dob);
+$age = $today->diff($birthDate)->y;
 ?>
 
 <!DOCTYPE html>
@@ -19,7 +29,7 @@ $username = htmlspecialchars($_SESSION['username'] ?? 'User'); // fallback usern
   <!-- Font Awesome for hamburger icon -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   
-  <link rel="stylesheet" href="../assets/Profile management.css">
+  <link rel="stylesheet" href="../assets/ProfileManagement.css">
   
 </head>
 <body>
@@ -41,26 +51,21 @@ $username = htmlspecialchars($_SESSION['username'] ?? 'User'); // fallback usern
     <div class="hamburger" id="hamburger"><i class="fas fa-bars"></i></div>
   </header>
 
-  <!-- View Profile Section -->
+  <!-- View Profile -->
   <div class="container section" id="viewProfile">
     <h2>View Profile</h2>
-
-    <!-- Profile Picture Section -->
     <div style="text-align:center; margin-bottom: 20px;">
       <div class="profile-pic-container">
         <img id="avatar" src="https://via.placeholder.com/120" class="profile-pic">
-        <div class="change-avatar-btn" onclick="showScreen('changeAvatar')">
-          Change
-        </div>
+        <div class="change-avatar-btn" onclick="showScreen('changeAvatar')">Change</div>
       </div>
-      <div class="value-label"><strong>Name:</strong> <span id="v_name">—</span></div>
-      <div class="value-label"><strong>Email:</strong> <span id="v_email">—</span></div>
-      <div class="value-label"><strong>Gender:</strong> <span id="v_gender">—</span></div>
-      <div class="value-label"><strong>Country:</strong> <span id="v_country">—</span></div>
-      <div class="value-label"><strong>Date of Birth:</strong> <span id="v_dob">—</span></div>
-      <div class="value-label"><strong>Age:</strong> <span id="v_age">—</span></div>
+      <div class="value-label"><strong>Name:</strong> <span id="v_name"><?= $username ?></span></div>
+      <div class="value-label"><strong>Email:</strong> <span id="v_email"><?= $email ?></span></div>
+      <div class="value-label"><strong>Gender:</strong> <span id="v_gender"><?= $gender ?></span></div>
+      <div class="value-label"><strong>Country:</strong> <span id="v_country"><?= $country ?></span></div>
+      <div class="value-label"><strong>Date of Birth:</strong> <span id="v_dob"><?= $dob ?></span></div>
+      <div class="value-label"><strong>Age:</strong> <span id="v_age"><?= $age ?></span></div>
     </div>
-
     <div class="links">
       <button onclick="showScreen('editProfile')">Edit Profile</button>
       <button onclick="showScreen('updatePassword')">Update Password</button>
@@ -70,33 +75,23 @@ $username = htmlspecialchars($_SESSION['username'] ?? 'User'); // fallback usern
   <!-- Edit Profile Section -->
   <div class="container section" id="editProfile">
     <h2>Edit Profile</h2>
-    <div class="field">
-      <label>Name:</label>
-      <input type="text" id="e_name">
-    </div>
-    <div class="field">
-      <label>Email:</label>
-      <input type="email" id="e_email">
-    </div>
+    
+    <div class="field"><label>Name:</label><input type="text" id="e_name" value="<?= $username ?>"></div>
+    <div class="field"><label>Email:</label><input type="email" id="e_email" value="<?= $email ?>"></div>
     <div class="field">
       <label>Gender:</label>
       <select id="e_gender">
         <option value="">Select</option>
-        <option>Male</option>
-        <option>Female</option>
-        <option>Other</option>
+        <option <?= $gender === 'Male' ? 'selected' : '' ?>>Male</option>
+        <option <?= $gender === 'Female' ? 'selected' : '' ?>>Female</option>
+        <option <?= $gender === 'Other' ? 'selected' : '' ?>>Other</option>
       </select>
     </div>
-    <div class="field">
-      <label>Country:</label>
-      <input type="text" id="e_country">
-    </div>
-    <div class="field">
-      <label>Date of Birth:</label>
-      <input type="date" id="e_dob">
-    </div>
+    <div class="field"><label>Country:</label><input type="text" id="e_country" value="<?= $country ?>"></div>
+    <div class="field"><label>Date of Birth:</label><input type="date" id="e_dob" value="<?= $dob ?>"></div>
     <button onclick="saveProfile()">Save Changes</button>
     <button onclick="showScreen('viewProfile')">Cancel</button>
+
   </div>
 
   <!-- Change Avatar Section -->
@@ -110,19 +105,14 @@ $username = htmlspecialchars($_SESSION['username'] ?? 'User'); // fallback usern
   <!-- Update Password Section -->
   <div class="container section" id="updatePassword">
     <h2>Update Password</h2>
-    <div class="field">
-      <label>New Password:</label>
-      <input type="password" id="new_password">
-    </div>
-    <div class="field">
-      <label>Confirm New Password:</label>
-      <input type="password" id="confirm_password">
-    </div>
+    <div class="field"><label>New Password:</label><input type="password" id="new_password"></div>
+    <div class="field"><label>Confirm New Password:</label><input type="password" id="confirm_password"></div>
     <button onclick="updatePassword()">Save Changes</button>
     <button onclick="showScreen('viewProfile')">Cancel</button>
   </div>
 
-  <script src="../assets/Profile management.js"></script>
+
+  <script src="../assets/ProfileManagement.js"></script>
 
 </body>
 </html>

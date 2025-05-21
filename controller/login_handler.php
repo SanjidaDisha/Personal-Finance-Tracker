@@ -20,7 +20,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     exit();
   } else {
     $_SESSION["error"] = "Invalid email or password.";
-    header("Location: Login.php");
+    header("Location: signin.php");
     exit();
   }
 }

@@ -25,13 +25,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         if ($errors) {
             $_SESSION['errors'] = $errors;
-            header("Location: ../view/Profile management.php");
+            header("Location: ../view/ProfileManagement.php");
             exit;
         }
 
         // Save to database (placeholder)
         $_SESSION['success'] = "Profile updated successfully!";
-        header("Location: ../view/Profile management.php");
+        header("Location: ../view/ProfileManagement.php");
         exit;
     }
 
@@ -49,7 +49,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $_SESSION['success'] = "Password updated successfully!";
         }
 
-        header("Location: ../view/Profile management.php");
+        header("Location: ../view/ProfileManagement.php");
         exit;
     }
 }
