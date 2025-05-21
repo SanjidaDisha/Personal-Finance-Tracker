@@ -2,11 +2,10 @@
 session_start();
 
 if (!isset($_SESSION['user'])) {
-    // Not logged in, redirect to signin page
     header('Location:../view/signin.php');
     exit;
 }
-$username = htmlspecialchars($_SESSION['username'] ?? 'User'); // fallback username
+$username = htmlspecialchars($_SESSION['username'] ?? 'User'); 
 ?>
 
 <!DOCTYPE html>
@@ -33,18 +32,15 @@ $username = htmlspecialchars($_SESSION['username'] ?? 'User'); // fallback usern
 
   <a href="landing-page.php">Home</a>
   <a href="ProfileManagement.php">Profile</a>
- <a href="reports.php">Reports/Graphs</a>
-  <a href="account-linking.php">Account Linking</a>
-  <a href="debt-tracking.php">Debt Tracking</a>
-  <a href="savings-goals.php">Savings Goals</a>
-  <a href="tax-categories.php">Tax Categories</a>
-  <a href="#">Export Data</a>
-
   <a href="expenseCategories.php">Expense Categories</a>
   <a href="income_recording.php">Income Recording</a>
   <a href="budgetGoals.php">Budget Goals</a>
   <a href="billReminders.php">Bill Reminders</a>
-  
+  <a href="reports.php">Reports/Graphs</a>
+  <a href="account-linking.php">Account Linking</a>
+  <a href="debt-tracking.php">Debt Tracking</a>
+  <a href="savings-goals.php">Savings Goals</a>
+  <a href="tax-categories.php">Tax Categories</a>
   <a href="exportWizard.php">Export Data</a>
 
 </nav>
@@ -76,10 +72,10 @@ $username = htmlspecialchars($_SESSION['username'] ?? 'User'); // fallback usern
 
 <script src="../assets/dashboard.js"></script>
 <script>
-  // Prevent accessing this page after logout by disabling browser cache
+  
   window.onload = function() {
     if (!window.performance || performance.navigation.type === 2) {
-      // If back/forward button is used, reload the page
+     
       location.reload(true);
     }
   };
