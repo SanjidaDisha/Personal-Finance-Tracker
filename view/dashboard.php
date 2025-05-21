@@ -52,10 +52,10 @@ $username = htmlspecialchars($_SESSION['username'] ?? 'User'); // fallback usern
 <main class="dashboard">
   <h2 class="section-title">Financial Overview</h2>
   <div class="widgets">
-    <div class="card"><h3>💰 Total Income</h3><p>₹45,000</p></div>
-    <div class="card"><h3>📤 Total Expenses</h3><p>₹33,500</p></div>
+    <div class="card"><h3>💰 Total Income</h3><p>$45,000</p></div>
+    <div class="card"><h3>📤 Total Expenses</h3><p>$33,500</p></div>
     <div class="card"><h3>💹 Savings Progress</h3><p>65%</p></div>
-    <div class="card"><h3>🧮 Budget Left</h3><p>₹11,500</p></div>
+    <div class="card"><h3>🧮 Budget Left</h3><p>$11,500</p></div>
   </div>
 
   <h2 class="section-title">Upcoming & Alerts</h2>
@@ -68,9 +68,9 @@ $username = htmlspecialchars($_SESSION['username'] ?? 'User'); // fallback usern
   <h2 class="section-title">Accounts & Goals</h2>
   <div class="widgets">
     <div class="card"><h3>🔗 Linked Accounts</h3><p>2 Linked</p></div>
-    <div class="card"><h3>💳 Total Debt</h3><p>₹12,000</p></div>
+    <div class="card"><h3>💳 Total Debt</h3><p>$12,000</p></div>
     <div class="card"><h3>🎯 Savings Goal</h3><p>40% Achieved</p></div>
-    <div class="card"><h3>📑 Tax Deductibles</h3><p>₹4,500</p></div>
+    <div class="card"><h3>📑 Tax Deductibles</h3><p>$4,500</p></div>
   </div>
 </main>
 

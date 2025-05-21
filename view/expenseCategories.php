@@ -41,7 +41,7 @@ require_once('../controller/expenseCategoriesController.php');
           title="1 to 30 characters"
         />
         
-        <label for="category-limit">Monthly Limit (₹):</label>
+        <label for="category-limit">Monthly Limit ($):</label>
         <input
           type="number"
           id="category-limit"
