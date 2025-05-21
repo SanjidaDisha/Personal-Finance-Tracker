@@ -1,10 +1,12 @@
 <?php
 session_start();
-// Check if session or cookie is set
-if (!isset($_SESSION['status']) && !isset($_COOKIE['status'])) {
-    header('Location: Login.php');
+
+if (!isset($_SESSION['user'])) {
+    // Not logged in, redirect to signin page
+    header('Location:../view/signin.php');
     exit;
 }
+$username = htmlspecialchars($_SESSION['username'] ?? 'User'); // fallback username
 ?>
 <!DOCTYPE html>
 <html lang="en">

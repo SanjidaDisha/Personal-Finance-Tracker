@@ -1,9 +1,22 @@
 <?php
 session_start();
-// Check if session or cookie is set
-if (!isset($_SESSION['status']) && !isset($_COOKIE['status'])) {
-    header('Location: Login.php');
+
+if (!isset($_SESSION['user'])) {
+    // Not logged in, redirect to signin page
+    header('Location:../view/signin.php');
     exit;
+}
+$username = htmlspecialchars($_SESSION['username'] ?? 'User'); // fallback username
+// Initialize deductions in session if not set
+if (!isset($_SESSION['deductions'])) {
+    $_SESSION['deductions'] = [];
+}
+$deductions = $_SESSION['deductions'];
+
+// Calculate total for summary
+$totalDeduction = 0;
+foreach ($deductions as $ded) {
+    $totalDeduction += floatval($ded['amount']);
 }
 ?>
 
@@ -30,6 +43,7 @@ if (!isset($_SESSION['status']) && !isset($_COOKIE['status'])) {
       <a href="debt-tracking.php">Debt</a>
       <a href="account-linking.php">Accounts</a>
       <a href="reports.php">Reports</a>
+      <a href="saving-goals.php"> Saving Goals</a>
        <a href="../controller/Logout.php">Logout</a> <!-- Corrected Logout link -->
     </nav>
     <div class="hamburger" id="hamburger"><i class="fas fa-bars"></i></div>
@@ -46,15 +60,23 @@ if (!isset($_SESSION['status']) && !isset($_COOKIE['status'])) {
   <!-- Deduction Manager -->
   <div id="deduction" class="section active">
     <h2>Deduction Manager</h2>
+     <form id="deductionForm" method="POST" action="../controller/tax-categoriescontroller.php" onsubmit="return validateForm()">
     <label for="deductionName">Expense Description</label>
-    <input type="text" id="deductionName" placeholder="e.g. Office supplies">
+     <input type="text" id="deductionName" name="deductionName" placeholder="e.g. Office supplies" required><br><br>
 
     <label for="deductionAmount">Amount ($)</label>
-    <input type="number" id="deductionAmount" placeholder="e.g. 120.50">
+    <input type="number" step="0.01" id="deductionAmount" name="deductionAmount" placeholder="e.g. 120.50" required><br><br>
 
     <button class="submit" onclick="addDeduction()">Add Deductible Expense</button>
+</form>
 
-    <div class="deduction-list" id="deductionList"></div>
+    <h3>Current Deductions:</h3>
+    <ul class="deduction-list" id="deductionList">
+      <?php foreach ($deductions as $ded): ?>
+        <li><?php echo htmlspecialchars($ded['description']); ?> - $<?php echo number_format(floatval($ded['amount']), 2); ?></li>
+      <?php endforeach; ?>
+    </ul>
+
   </div>
 
   <!-- Year-End Summary -->

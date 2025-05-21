@@ -1,10 +1,12 @@
 <?php
 session_start();
-// Check if session or cookie is set
-if (!isset($_SESSION['status']) && !isset($_COOKIE['status'])) {
-    header('Location: Login.php');
+
+if (!isset($_SESSION['user'])) {
+    // Not logged in, redirect to signin page
+    header('Location:../view/signin.php');
     exit;
 }
+$username = htmlspecialchars($_SESSION['username'] ?? 'User'); // fallback username
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -46,58 +48,84 @@ if (!isset($_SESSION['status']) && !isset($_COOKIE['status'])) {
   <!-- Screen 1: Bank Connection Wizard -->
   <div id="wizard" class="section active">
     <h2>Bank Connection Wizard</h2>
-    <form id="bankForm">
-      <label for="bankName">Bank Name</label>
-      <input type="text" id="bankName" placeholder="e.g., Wells Fargo" required>
+    <form id="bankForm" method="POST" action="../controller/account-linkingcontroller.php">
+    <label for="bankName">Bank Name</label>
+    <input
+      type="text"
+      id="bankName"
+      name="bankName"
+      placeholder="e.g., Wells Fargo"
+      value="<?php echo htmlspecialchars($old['bankName'] ?? ''); ?>"
+      required
+    >
+    <?php if (isset($errors['bankName'])): ?>
+      <p class="error"><?php echo $errors['bankName']; ?></p>
+    <?php endif; ?>
 
-      <label for="accountType">Account Type</label>
-      <select id="accountType">
-        <option>Checking</option>
-        <option>Savings</option>
-        <option>Credit</option>
-      </select>
+    <label for="accountType">Account Type</label>
+    <select id="accountType" name="accountType" required>
+      <option value="" disabled <?php echo empty($old['accountType']) ? 'selected' : ''; ?>>Select account type</option>
+      <option value="Checking" <?php echo (isset($old['accountType']) && $old['accountType'] === 'Checking') ? 'selected' : ''; ?>>Checking</option>
+      <option value="Savings" <?php echo (isset($old['accountType']) && $old['accountType'] === 'Savings') ? 'selected' : ''; ?>>Savings</option>
+      <option value="Credit" <?php echo (isset($old['accountType']) && $old['accountType'] === 'Credit') ? 'selected' : ''; ?>>Credit</option>
+    </select>
+    <?php if (isset($errors['accountType'])): ?>
+      <p class="error"><?php echo $errors['accountType']; ?></p>
+    <?php endif; ?>
 
-      <label for="login">Online Banking Username</label>
-      <input type="text" id="login" placeholder="Your username" required>
+    <label for="login">Online Banking Username</label>
+    <input
+      type="text"
+      id="login"
+      name="login"
+      placeholder="Your username"
+      value="<?php echo htmlspecialchars($old['login'] ?? ''); ?>"
+      required
+    >
+    <?php if (isset($errors['login'])): ?>
+      <p class="error"><?php echo $errors['login']; ?></p>
+    <?php endif; ?>
 
-      <label for="password">Password</label>
-      <input type="password" id="password" placeholder="Your password" required>
+    <label for="password">Password</label>
+    <input type="password" id="password" name="password" placeholder="Your password" required>
+    <?php if (isset($errors['password'])): ?>
+      <p class="error"><?php echo $errors['password']; ?></p>
+    <?php endif; ?>
 
-      <button type="submit">Connect</button>
-    </form>
+    <button type="submit">Connect</button>
+  </form>
+</div>
   </div>
 
-  <!-- Screen 2: Sync Status -->
   <div id="sync" class="section">
-    <h2>Sync Status</h2>
-    <div class="status-box">Bank of America - Last Sync: 2 hours ago</div>
-    <div class="status-box">Wells Fargo - Last Sync: 10 mins ago</div>
-    <label for="syncRate">Sync Frequency</label>
-    <select id="syncRate">
-      <option>Every 15 minutes</option>
-      <option>Hourly</option>
-      <option>Daily</option>
-    </select>
-    <button onclick="alert('Sync frequency updated')">Update Frequency</button>
-  </div>
+  <h2>Sync Status</h2>
+  <div class="status-box">Bank of America - Last Sync: 2 hours ago</div>
+  <div class="status-box">Wells Fargo - Last Sync: 10 mins ago</div>
+  <label for="syncRate">Sync Frequency</label>
+  <select id="syncRate">
+    <option>Every 15 minutes</option>
+    <option>Hourly</option>
+    <option>Daily</option>
+  </select>
+  <button onclick="alert('Sync frequency updated')">Update Frequency</button>
+</div>
 
-  <!-- Screen 3: Error Resolver -->
   <div id="resolver" class="section">
-    <h2>Error Resolver</h2>
-    <div class="status-box error">⚠️ Chase: Login expired</div>
-    <div class="status-box error">⚠️ Citi Bank: Incorrect password</div>
+  <h2>Error Resolver</h2>
+  <div class="status-box error">⚠️ Chase: Login expired</div>
+  <div class="status-box error">⚠️ Citi Bank: Incorrect password</div>
 
-    <label for="bankFix">Select Bank</label>
-    <select id="bankFix">
-      <option>Chase</option>
-      <option>Citi Bank</option>
-    </select>
+  <label for="bankFix">Select Bank</label>
+  <select id="bankFix">
+    <option>Chase</option>
+    <option>Citi Bank</option>
+  </select>
 
-    <label for="newPassword">Enter New Password</label>
-    <input type="password" id="newPassword" placeholder="Enter new password">
-    
-    <button onclick="resolveError()">Fix Connection</button>
-  </div>
+  <label for="newPassword">Enter New Password</label>
+  <input type="password" id="newPassword" placeholder="Enter new password">
+
+  <button onclick="resolveError()">Fix Connection</button>
+</div>
 
    <script src="../assets/account-linking.js"></script>
 

@@ -20,8 +20,8 @@
           <li><a href="#home">Home</a></li>
           <li><a href="#features">Features</a></li>
           <li><a href="#testimonials">Testimonials</a></li>
-          <li><a href="view/register.php">Signup</a></li>
-          <li><a href="Login.php">Login</a></li>
+          <li><a href="view/signup.php">Signup</a></li>
+          <li><a href="signin.php">Login</a></li>
         </ul>
       </nav>
     </div>
@@ -77,7 +77,7 @@
 
   <section class="cta-section" id="signup">
     <h2>Get the App Now for Free</h2>
-    <a href="../register.php" class="btn secondary">Signup</a>
+    <a href="../signup.php" class="btn secondary">Signup</a>
   </section>
 
   <footer>
