@@ -1,5 +1,6 @@
 <?php
 session_start();
+require_once '../model/User.php';
 
 // Get form inputs
 $username = trim($_POST['username'] ?? '');
@@ -32,29 +33,15 @@ if ($password !== $confirm_password) {
     exit();
 }
 
-// Initialize users array in session if it doesn't exist
-if (!isset($_SESSION['users'])) {
-    $_SESSION['users'] = [];
-}
+// Create user
+$user = new User();
+[$success, $message] = $user->create($username, $email, $password);
 
-// Check if email already registered
-if (isset($_SESSION['users'][$email])) {
-    $_SESSION['error'] = "User with this email already exists.";
+if ($success) {
+    $_SESSION['success'] = "Registration successful! Please log in.";
+    header("Location: ../view/signin.php");
+} else {
+    $_SESSION['error'] = $message;
     header("Location: ../view/signup.php");
-    exit();
 }
-
-// Store new user in session with hashed password
-$_SESSION['users'][$email] = [
-    'username' => htmlspecialchars($username),
-    'email' => htmlspecialchars($email),
-    'password' => password_hash($password, PASSWORD_DEFAULT),
-];
-
-// Optionally set a cookie for username
-setcookie('registered_user', $username, time() + (86400 * 7), "/");
-
-// Success message and redirect to signin
-$_SESSION['success'] = "Registration successful! Please log in.";
-header("Location: ../view/signin.php");
 exit();
