@@ -1,5 +1,6 @@
 <?php
 session_start();
+require_once '../model/User.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = filter_var(trim($_POST['email'] ?? ''), FILTER_VALIDATE_EMAIL);
@@ -17,35 +18,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    // Check if users are stored in session
-    if (!isset($_SESSION['users']) || !isset($_SESSION['users'][$email])) {
-        $_SESSION['error'] = "Invalid email or password.";
+    $user = new User();
+    [$success, $result] = $user->authenticate($email, $password);
+
+    if ($success) {
+        // Store user info in session
+        $_SESSION['user'] = [
+            'id' => $result['id'],
+            'email' => $result['email'],
+            'username' => $result['username']
+        ];
+
+        // Handle "remember me"
+        if (isset($_POST['remember'])) {
+            setcookie('remember_me', $result['email'], time() + (86400 * 30), "/"); // 30 days
+        }
+
+        $_SESSION['success'] = "Successfully signed in!";
+        header('Location:../view/dashboard.php');
+    } else {
+        $_SESSION['error'] = $result;
         header('Location: ../view/signin.php');
-        exit;
     }
-
-    $user = $_SESSION['users'][$email];
-
-    // Verify password hash
-    if (!password_verify($password, $user['password'])) {
-        $_SESSION['error'] = "Invalid email or password.";
-        header('Location: ../view/signin.php');
-        exit;
-    }
-
-    // Successful login: store user info in session (you can customize this)
-    $_SESSION['user'] = [
-        'email' => $user['email'],
-        'username' => $user['username'],
-    ];
-
-    // Handle "remember me"
-    if (isset($_POST['remember'])) {
-        setcookie('remember_me', $user['email'], time() + (86400 * 30), "/"); // 30 days
-    }
-
-    $_SESSION['success'] = "Successfully signed in!";
-    header('Location:../view/dashboard.php');
     exit;
 } else {
     header('Location: ../view/signin.php');
