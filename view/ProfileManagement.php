@@ -105,6 +105,7 @@ $age = $today->diff($birthDate)->y;
   <!-- Update Password Section -->
   <div class="container section" id="updatePassword">
     <h2>Update Password</h2>
+    <div class="field"><label>Current Password:</label><input type="password" id="current_password"></div>
     <div class="field"><label>New Password:</label><input type="password" id="new_password"></div>
     <div class="field"><label>Confirm New Password:</label><input type="password" id="confirm_password"></div>
     <button onclick="updatePassword()">Save Changes</button>

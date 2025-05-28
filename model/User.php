@@ -101,4 +101,26 @@ class User {
         $stmt->execute([$email]);
         return $stmt->fetchColumn() > 0;
     }
+
+    public function updatePassword($userId, $currentPassword, $newPassword) {
+        try {
+            // First verify the current password
+            $stmt = $this->db->prepare("SELECT password FROM {$this->table} WHERE id = ?");
+            $stmt->execute([$userId]);
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$user || !password_verify($currentPassword, $user['password'])) {
+                return [false, "Current password is incorrect"];
+            }
+
+            // Update with new password
+            $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+            $stmt = $this->db->prepare("UPDATE {$this->table} SET password = ? WHERE id = ?");
+            $stmt->execute([$hashedPassword, $userId]);
+
+            return [true, "Password updated successfully"];
+        } catch (PDOException $e) {
+            return [false, "Password update failed: " . $e->getMessage()];
+        }
+    }
 }
