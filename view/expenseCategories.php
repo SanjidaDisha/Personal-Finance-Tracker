@@ -1,6 +1,13 @@
 <?php
-// Include controller logic for session + POST handling
+
 require_once('../controller/expenseCategoriesController.php');
+
+
+$categoryMessage = isset($_SESSION['category_message']) ? $_SESSION['category_message'] : '';
+
+if (isset($_SESSION['category_message'])) {
+    unset($_SESSION['category_message']);
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -9,6 +16,13 @@ require_once('../controller/expenseCategoriesController.php');
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Expense Categories - FinanceTracker</title>
   <link rel="stylesheet" href="../assets/expenseCategories.css" />
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
 </head>
 <body>
   <header class="navbar">
@@ -28,53 +42,36 @@ require_once('../controller/expenseCategoriesController.php');
     <!-- Category Manager -->
     <section class="category-section">
       <h2>Add New Category</h2>
-      <form method="post" id="category-form" novalidate>
-        <input type="hidden" name="action" value="add_category" />
-        <label for="category-name">Category Name:</label>
-        <input
-          type="text"
-          id="category-name"
-          name="category_name"
-          required
-          maxlength="30"
-          pattern=".{1,30}"
-          title="1 to 30 characters"
-        />
-        
-        <label for="category-limit">Monthly Limit ($):</label>
-        <input
-          type="number"
-          id="category-limit"
-          name="category_limit"
-          min="0"
-          step="0.01"
-          required
-        />
 
-        <button type="submit">Add Category</button>
+      <form id="category-form" method="POST">
+          <input type="hidden" name="action" value="add_category">
+          <div class="form-group">
+              <label for="categoryName">Category Name:</label>
+              <input type="text" id="categoryName" name="category_name" required>
+          </div>
+          <div class="form-group">
+              <label for="monthlyLimit">Monthly Limit:</label>
+              <input type="number" id="monthlyLimit" name="monthly_limit" step="0.01" min="0" required>
+          </div>
+          <button type="button" onclick="saveCategory()">Save Category</button>
       </form>
+
       <div id="category-message" class="message"><?php echo $categoryMessage; ?></div>
       
-      <h3>Existing Categories</h3>
-      <div id="category-list">
-        <?php if (empty($_SESSION['categories'])): ?>
-          <p>No categories added yet.</p>
-        <?php else: ?>
-          <?php foreach ($_SESSION['categories'] as $i => $cat): ?>
-            <div class="category-item">
-              <div>
-                <strong class="category-name"><?php echo htmlspecialchars($cat['name']); ?></strong><br />
-                <small>Limit: ₹<?php echo number_format($cat['limit'], 2); ?></small>
-              </div>
-              <form method="post" style="display:inline;">
-                <input type="hidden" name="action" value="delete_category" />
-                <input type="hidden" name="index" value="<?php echo $i; ?>" />
-                <button type="submit" onclick="return confirm('Delete this category?')">Delete</button>
-              </form>
-            </div>
-          <?php endforeach; ?>
-        <?php endif; ?>
-      </div>
+      <h3>Category Data Table</h3>
+        <table id="categoryTable" class="display" style="width:100%">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Monthly Limit ($)</th>
+              <th>Spent ($)</th>
+              <th>Progress</th>
+            </tr>
+          </thead>
+          <tbody>
+          
+          </tbody>
+        </table>
     </section>
 
     <hr />
@@ -107,7 +104,7 @@ require_once('../controller/expenseCategoriesController.php');
 
         <button type="submit">Add Rule</button>
       </form>
-      <div id="rule-message" class="message"><?php echo $ruleMessage; ?></div>
+      <div id="rule-message" class="message"></div>
       
       <h3>Existing Rules</h3>
       <div id="rule-list">
@@ -151,10 +148,13 @@ require_once('../controller/expenseCategoriesController.php');
 
         <button type="submit">Tag Transaction</button>
       </form>
-      <div id="tagging-result" class="message"><?php echo $transactionMessage; ?></div>
+      <div id="tagging-result" class="message"></div>
     </section>
   </main>
 
   <script src="../assets/expenseCategories.js"></script>
 </body>
+
+<div id="toast" class="toast"></div>
 </html>
+

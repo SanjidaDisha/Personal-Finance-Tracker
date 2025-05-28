@@ -59,22 +59,107 @@ function updateAvatar() {
 }
 
 // Change password (simulated)
+// Update password
+
 function updatePassword() {
+  const currentPassword = document.getElementById("current_password").value;
   const newPassword = document.getElementById("new_password").value;
   const confirmPassword = document.getElementById("confirm_password").value;
 
-  if (!newPassword || !confirmPassword) {
-    alert("Please enter both password fields.");
-    return;
+  if (!currentPassword || !newPassword || !confirmPassword) {
+      alert("Please fill in all password fields.");
+      return;
   }
 
   if (newPassword !== confirmPassword) {
-    alert("Passwords do not match.");
-    return;
+      alert("New passwords do not match.");
+      return;
   }
 
-  alert("Password updated successfully!");
-  showScreen("viewProfile");
+  if (newPassword.length < 6) {
+      alert("Password must be at least 6 characters long.");
+      return;
+  }
+
+  const formData = new FormData();
+  formData.append('action', 'updatePassword');
+  formData.append('current_password', currentPassword);
+  formData.append('new_password', newPassword);
+  formData.append('confirm_password', confirmPassword);
+
+  fetch('../controller/Profile managementcontroller.php', {
+      method: 'POST',
+      body: formData
+  })
+  .then(response => response.json())
+  .then(data => {
+      if (data.success) {
+          alert(data.message);
+          console.log("Json data:" + JSON.stringify(data, null, 2));
+          showScreen("viewProfile");
+          document.getElementById("current_password").value = '';
+          document.getElementById("new_password").value = '';
+          document.getElementById("confirm_password").value = '';
+      } else {
+          alert(data.message);
+      }
+  })
+  .catch(error => {
+      console.error('Error:', error);
+      alert("An error occurred while updating the password.");
+  });
+}
+
+
+function updatePassword1() {
+    const currentPassword = document.getElementById("current_password").value;
+    const newPassword = document.getElementById("new_password").value;
+    const confirmPassword = document.getElementById("confirm_password").value;
+
+    if (!currentPassword || !newPassword || !confirmPassword) {
+        alert("Please fill in all password fields.");
+        return;
+    }
+
+    if (newPassword !== confirmPassword) {
+        alert("New passwords do not match.");
+        return;
+    }
+
+    if (newPassword.length < 6) {
+        alert("Password must be at least 6 characters long.");
+        return;
+    }
+
+    // Create form data
+    const formData = new FormData();
+    formData.append('action', 'updatePassword');
+    formData.append('current_password', currentPassword);
+    formData.append('new_password', newPassword);
+    formData.append('confirm_password', confirmPassword);
+
+    // Send password update request to server
+    fetch('../controller/Profile managementcontroller.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert(data.message + data);
+            showScreen("viewProfile");
+            // Clear the form
+            document.getElementById("current_password").value = '';
+            document.getElementById("new_password").value = '';
+            document.getElementById("confirm_password").value = '';
+        } else {
+            alert(data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert("An error occurred while updating the password.");
+    });
 }
 
 // Hamburger toggle

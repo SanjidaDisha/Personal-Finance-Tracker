@@ -1,5 +1,57 @@
 <?php
 session_start();
+require_once '../model/User.php';
+
+if (!isset($_SESSION['user'])) {
+    header('Location: ../view/signin.php');
+    exit;
+}
+
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    // Set JSON response header
+    header('Content-Type: application/json');
+    
+    // Handle Password Update
+    if (isset($_POST['action']) && $_POST['action'] === 'updatePassword') {
+        $currentPassword = $_POST['current_password'] ?? '';
+        $newPassword = $_POST['new_password'] ?? '';
+        $confirmPassword = $_POST['confirm_password'] ?? '';
+        $userId = $_SESSION['user']['id'];
+
+        $errors = [];
+
+        // Validate password requirements
+        if (empty($currentPassword)) {
+            $errors[] = "Current password is required.";
+        }
+        if (strlen($newPassword) < 6) {
+            $errors[] = "New password must be at least 6 characters.";
+        }
+        if ($newPassword !== $confirmPassword) {
+            $errors[] = "New passwords do not match.";
+        }
+
+        if (!empty($errors)) {
+            echo json_encode(['success' => false, 'message' => $errors[0]]);
+            exit;
+        }
+
+        // Update password
+        $user = new User();
+        $result = $user->updatePassword($userId, $currentPassword, $newPassword);
+
+        if ($result[0]) {
+            echo json_encode(['success' => true, 'message' => $result[1]]);
+        } else {
+            echo json_encode(['success' => false, 'message' => $result[1]]);
+        }
+        exit;
+    }
+}
+?>
+<?php
+session_start();
+require_once '../model/User.php';
 
 if (!isset($_SESSION['user'])) {
     header('Location: ../view/signin.php');
@@ -31,24 +83,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         // Save to database (placeholder)
         $_SESSION['success'] = "Profile updated successfully!";
-        header("Location: ../view/ProfileManagement.php");
-        exit;
-    }
-
-    // Handle Password Update
-    if ($_POST['action'] === 'updatePassword') {
-        $newPassword = $_POST['new_password'] ?? '';
-        $confirmPassword = $_POST['confirm_password'] ?? '';
-
-        if (strlen($newPassword) < 6) {
-            $_SESSION['errors'] = ["Password must be at least 6 characters."];
-        } elseif ($newPassword !== $confirmPassword) {
-            $_SESSION['errors'] = ["Passwords do not match."];
-        } else {
-            // Save hashed password (placeholder)
-            $_SESSION['success'] = "Password updated successfully!";
-        }
-
         header("Location: ../view/ProfileManagement.php");
         exit;
     }
