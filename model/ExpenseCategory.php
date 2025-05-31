@@ -37,5 +37,39 @@ class ExpenseCategory {
             return false;
         }
     }
+
+    public function deleteCategory($userId, $categoryId) {
+        try {
+            $stmt = $this->db->prepare("DELETE FROM {$this->table} WHERE id = ? AND user_id = ?");
+            $stmt->execute([$categoryId, $userId]);
+    
+            if ($stmt->rowCount() > 0) {
+                return [true, "Category deleted successfully"];
+            } else {
+                return [false, "Category not found or you do not have permission to delete it"];
+            }
+        } catch (PDOException $e) {
+            error_log("Failed to delete category: " . $e->getMessage());
+            return [false, "Failed to delete category: " . $e->getMessage()];
+        }
+    }
+
+    public function updateSpentAmount($userId, $categoryId, $spentAmount) {
+        try {
+            $stmt = $this->db->prepare("UPDATE {$this->table} SET spent = ? WHERE id = ? AND user_id = ?");
+            $stmt->execute([$spentAmount, $categoryId, $userId]);
+    
+            if ($stmt->rowCount() > 0) {
+                return [true, "Spent amount updated"];
+            } else {
+                return [false, "No rows updated (check category ownership or values)"];
+            }
+        } catch (PDOException $e) {
+            error_log("Failed to update spent: " . $e->getMessage());
+            return [false, "Database error: " . $e->getMessage()];
+        }
+    }
+    
+    
     
 }

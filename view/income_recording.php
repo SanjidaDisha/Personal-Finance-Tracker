@@ -1,109 +1,121 @@
 <?php
 session_start();
+
 if (!isset($_SESSION['user'])) {
-  header("Location:../view/signin.php");
-  exit();
+  header('Location: login.php');
+  exit;
 }
-$username = $_SESSION['user'];
+
+$incomeMessage = $_SESSION['income_message'] ?? '';
+unset($_SESSION['income_message']);
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Income Recording - FinanceTracker</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../assets/incomeRecording.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Income Manager - FinanceTracker</title>
+
+  <!-- External Libraries -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="../assets/expenseCategories.css" />
+
+  <style>
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .input-field, select, textarea {
+      width: 100%;
+      padding: 6px 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    .btn {
+      padding: 8px 16px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .btn:hover {
+      background-color: #0056b3;
+    }
+
+    .container {
+      padding: 20px;
+    }
+  </style>
 </head>
+
 <body>
   <header class="navbar">
     <div class="logo">FinanceTracker</div>
     <div class="user">
       <span>Welcome, <?php echo htmlspecialchars($_SESSION['user']['email']); ?>!</span>
-      <button class="profile-btn" onclick="window.location.href='profile.php'">👤</button>
+      <form method="post" action="../controller/logout.php" style="display:inline;">
+        <button type="submit">Logout</button>
+      </form>
     </div>
   </header>
 
-    <?php
-  if (isset($_SESSION['income_errors']) && count($_SESSION['income_errors']) > 0) {
-      echo '<div class="error-messages">';
-      echo '<ul>';
-      foreach ($_SESSION['income_errors'] as $error) {
-          echo '<li>' . htmlspecialchars($error) . '</li>';
-      }
-      echo '</ul>';
-      echo '</div>';
-      unset($_SESSION['income_errors']);
-  }
-  ?>
+  <main class="container">
+    <h1>Income Manager</h1>
+    <section class="category-section">
+      <h2><i class="far fa-plus-square"></i> Add New Income</h2>
+      <form id="income-form" method="POST">
 
-  <nav class="tabs">
-    <button class="active" data-tab="paycheck">Paycheck Log</button>
-    <button data-tab="recurring">Recurring Income</button>
-    <button data-tab="sidehustle">Side Hustle</button>
-  </nav>
+        <div class="form-group">
+          <label for="incomeSource">Income Source:</label>
+          <input type="text" id="incomeSource" name="income_source" required placeholder="e.g. Salary, Freelance" class="input-field" />
+        </div>
 
-  <main>
-    <!-- PAYCHECK TAB -->
-    <section id="paycheck" class="tab-content active">
-      <h2>Paycheck Log</h2>
-      <form action="../controller/income_controller.php" method="POST" onsubmit="return validatePaycheck()">
-        <input type="hidden" name="type" value="paycheck" />
-        <label>Payee</label>
-        <input type="text" name="payee" id="payee" required />
-        <label>Amount (₹)</label>
-        <input type="number" name="amount" id="amount" min="0" required />
-        <label>Date</label>
-        <input type="date" name="date" id="payDate" required />
-        <button type="submit">Add Paycheck</button>
+        <div class="form-group">
+          <label for="incomeAmount">Income Amount:</label>
+          <input type="number" id="incomeAmount" name="income_amount" step="0.01" min="0" required class="input-field">
+        </div>
+
+        <div class="form-group">
+          <label for="incomeDate">Income Date:</label>
+          <input type="date" id="incomeDate" name="income_date" required class="input-field">
+        </div>
+
+        <div class="form-group">
+          <label for="incomeDescription">Income Description:</label>
+          <textarea id="incomeDescription" name="income_description" rows="3" placeholder="Add details..." class="input-field"></textarea>
+        </div>
+
+        <button type="button" class="btn" onclick="handleIncomeSubmit()">Submit</button>
       </form>
-    </section>
 
-    <!-- RECURRING TAB -->
-    <section id="recurring" class="tab-content">
-      <h2>Recurring Income</h2>
-      <form action="../controller/income_controller.php" method="POST" onsubmit="return validateRecurring()">
-        <input type="hidden" name="type" value="recurring" />
-        <label>Source</label>
-        <input type="text" name="source" id="recurringSource" required />
-        <label>Amount (₹)</label>
-        <input type="number" name="amount" id="recurringAmount" min="0" required />
-        <label>Frequency</label>
-        <select name="frequency" id="recurringFrequency">
-          <option value="Monthly">Monthly</option>
-          <option value="Bi-Weekly">Bi-Weekly</option>
-          <option value="Weekly">Weekly</option>
-        </select>
-        <label>Start Date</label>
-        <input type="date" name="startDate" id="recurringStartDate" required />
-        <button type="submit">Set Recurring</button>
-      </form>
-    </section>
+      <div id="income-message"><?php echo $incomeMessage; ?></div>
 
-    <!-- SIDE HUSTLE TAB -->
-    <section id="sidehustle" class="tab-content">
-      <h2>Side Hustle</h2>
-      <form action="../controller/income_controller.php" method="POST" onsubmit="return validateSide()">
-        <input type="hidden" name="type" value="side" />
-        <label>Description</label>
-        <input type="text" name="desc" id="sideDescription" required />
-        <label>Amount (₹)</label>
-        <input type="number" name="amount" id="sideAmount" min="0" required />
-        <label>Date</label>
-        <input type="date" name="date" id="sideDate" required />
-        <button type="submit">Log Side Hustle</button>
-      </form>
-    </section>
-
-    <!-- FORECAST SECTION -->
-    <section class="forecast">
-      <h2>Income Forecast</h2>
-      <p id="forecast1">Next 1 Month: ₹0</p>
-      <p id="forecast3">Next 3 Months: ₹0</p>
-      <p id="forecast6">Next 6 Months: ₹0</p>
+      <h2><i class="fas fa-list-alt"></i> Income List</h2>
+      <table id="incomeTable" class="display" style="width:100%">
+        <thead>
+          <tr>
+            <th>Action</th>
+            <th>Date</th>
+            <th>Source</th> <!-- Added Source Column -->
+            <th>Amount (₹)</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
     </section>
   </main>
 
   <script src="../assets/incomeRecording.js"></script>
+
 </body>
 </html>

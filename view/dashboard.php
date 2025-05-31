@@ -41,7 +41,7 @@ $username = htmlspecialchars($_SESSION['username'] ?? 'User');
   <a href="debt-tracking.php">Debt Tracking</a>
   <a href="savings-goals.php">Savings Goals</a>
   <a href="tax-categories.php">Tax Categories</a>
-  <a href="exportWizard.php">Export Data</a>
+  <!--<a href="exportWizard.php">Export Data</a>!-->
 
 </nav>
 

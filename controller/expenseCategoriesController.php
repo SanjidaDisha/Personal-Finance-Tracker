@@ -11,6 +11,9 @@ if (!isset($_SESSION['user'])) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     header('Content-Type: application/json');
 
+    $userId = $_SESSION['user']['id'];
+    $expenseCategory = new ExpenseCategory();
+
     if (isset($_POST['action']) && $_POST['action'] === 'saveCategory') {
         // Sanitize inputs
         $categoryName = trim($_POST['categoryName'] ?? '');
@@ -31,8 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit;
         }
 
-        $userId = $_SESSION['user']['id'];
-        $expenseCategory = new ExpenseCategory();
+        
 
         $result = $expenseCategory->createCategory($userId, $categoryName, $monthlyLimit, $spent);
 
@@ -56,6 +58,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         exit;
     }
+
+    
+    if (isset($_POST['action']) && $_POST['action'] === 'deleteCategory') {
+        //echo json_encode(['success' => true, 'message' => 'inside delete.']);
+        $categoryId = intval($_POST['categoryId'] ?? 0);
+        if ($categoryId <= 0) {
+            echo json_encode(['success' => false, 'message' => 'Invalid category ID.']);
+            exit;
+        }
+        list($success, $message) = $expenseCategory->deleteCategory($userId, $categoryId);
+        echo json_encode(['success' => $success, 'message' => $message]);
+        exit;
+    }
+
+
+    if (isset($_POST['action']) && $_POST['action'] === 'updateSpent') {
+        $categoryId = intval($_POST['category_id'] ?? 0);
+        $spentAmount = floatval($_POST['spent_amount'] ?? 0);
+    
+        if ($categoryId <= 0 || $spentAmount < 0) {
+            echo json_encode(['success' => false, 'message' => 'Invalid input.']);
+            exit;
+        }
+    
+        $result = $expenseCategory->updateSpentAmount($userId, $categoryId, $spentAmount);
+    
+        if ($result[0]) {
+            echo json_encode(['success' => true, 'message' => 'Spent amount updated successfully.']);
+        } else {
+            echo json_encode(['success' => false, 'message' => $result[1]]);
+        }
+        exit;
+    }
+    
+
+    
 
     echo json_encode(['success' => false, 'message' => 'Invalid action.']);
     exit;
