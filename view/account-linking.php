@@ -15,14 +15,13 @@ $username = htmlspecialchars($_SESSION['username'] ?? 'User'); // fallback usern
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Savings Goals - Finance Tracker</title>
 
-  <!-- Font Awesome for hamburger icon -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
    <link rel="stylesheet" href="../assets/account-linking.css" />
 </head>
 <body>
 
-  <!-- Responsive Navbar -->
+ 
   <header class="navbar">
     <div class="logo">FinanceTracker</div>
     <nav class="nav-links" id="navLinks">
@@ -45,7 +44,7 @@ $username = htmlspecialchars($_SESSION['username'] ?? 'User'); // fallback usern
     <button onclick="showScreen('resolver')">Error Resolver</button>
   </div>
 
-  <!-- Screen 1: Bank Connection Wizard -->
+ 
   <div id="wizard" class="section active">
     <h2>Bank Connection Wizard</h2>
     <form id="bankForm" method="POST" action="../controller/account-linkingcontroller.php">

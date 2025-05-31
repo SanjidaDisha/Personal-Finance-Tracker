@@ -37,7 +37,7 @@
     <div class="container">
       <h2>Smart Features You'll Love</h2>
       <div class="features">
-        <!-- Repeated Feature Cards -->
+        
         <?php
           $features = [
             ["📦", "Manage Subscriptions", "Automatically detect and manage all your subscriptions."],

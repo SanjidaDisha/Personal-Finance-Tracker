@@ -3,7 +3,7 @@ class Database {
     private $host = "localhost";
     private $username = "root";
     private $password = "";
-    private $database = "pft";
+    private $database = "personal_finance_tracker";
     private $conn;
 
     public function connect() {

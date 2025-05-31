@@ -1,38 +1,31 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
-if (!isset($_SESSION['user'])) {
-    header('Location:../view/signin.php');
+require_once '../model/DebtModel.php';
+
+$model = new DebtModel();
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $loanType = trim($_POST['loanType'] ?? '');
+    $amount = floatval($_POST['amount'] ?? 0);
+    $apr = floatval($_POST['apr'] ?? 0);
+    $userId = $_SESSION['user']['id'] ?? null;
+
+    $_SESSION['debt_errors'] = [];
+    if (empty($loanType) || $amount <= 0 || $apr < 0) {
+        $_SESSION['debt_errors'][] = "All fields are required and must be valid.";
+    }
+
+    if (empty($_SESSION['debt_errors']) && $userId) {
+        if ($model->addDebt($userId, $loanType, $amount, $apr)) {
+            $_SESSION['success'] = "Loan added successfully.";
+        } else {
+            $_SESSION['debt_errors'][] = "Failed to add loan.";
+        }
+    }
+
+    header("Location: ../view/debt-tracking.php");
     exit;
 }
-
-function sanitize($data) {
-    return htmlspecialchars(trim($data));
-}
-
-$loanName = sanitize($_POST['loanName'] ?? '');
-$loanAmount = $_POST['loanAmount'] ?? '';
-$loanRate = $_POST['loanRate'] ?? '';
-
-$errors = [];
-
-if (empty($loanName)) {
-    $errors[] = "Loan name is required.";
-}
-if (!is_numeric($loanAmount) || $loanAmount <= 0) {
-    $errors[] = "Loan amount must be a positive number.";
-}
-if (!is_numeric($loanRate) || $loanRate <= 0) {
-    $errors[] = "Loan APR must be a positive number.";
-}
-
-if (!empty($errors)) {
-    $_SESSION['debt_errors'] = $errors;
-    header('Location: ../view/debt-tracking.php');
-    exit;
-}
-
-$_SESSION['success'] = "Loan successfully added.";
-header('Location: ../view/debt-tracking.php');
-exit;
-?>

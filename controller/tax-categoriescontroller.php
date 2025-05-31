@@ -1,32 +1,32 @@
 <?php
 session_start();
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $description = trim($_POST["deductionName"]);
-    $amount = $_POST["deductionAmount"];
-
-    $errors = [];
-
-    if (empty($description)) {
-        $errors[] = "Description is required.";
-    }
-
-    if (!is_numeric($amount) || $amount <= 0) {
-        $errors[] = "Amount must be a positive number.";
-    }
-
-    if (empty($errors)) {
-        // Simulate saving (you may insert into DB here)
-        $_SESSION['deductions'][] = [
-            'description' => htmlspecialchars($description),
-            'amount' => number_format($amount, 2)
-        ];
-        header("Location: ../view/tax-categories.php?success=1");
-        exit();
-    } else {
-        $_SESSION['errors'] = $errors;
-        header("Location: ../view/tax-categories.php");
-        exit();
-    }
+if (!isset($_SESSION['user'])) {
+    header('Location: ../view/signin.php');
+    exit;
 }
-?>
+
+require_once '../model/TaxCategoriesModel.php';
+
+$model = new TaxCategoriesModel();
+$userId = $_SESSION['user']['id']; // assuming user session stores user info in ['user']
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $description = trim($_POST['deductionName'] ?? '');
+    $amount = $_POST['deductionAmount'] ?? '';
+
+    if ($description === '' || !is_numeric($amount) || floatval($amount) <= 0) {
+        $_SESSION['error'] = "Please enter a valid description and amount.";
+        header('Location: ../view/tax-categories.php');
+        exit;
+    }
+
+    $success = $model->addDeduction($userId, $description, floatval($amount));
+    if ($success) {
+        $_SESSION['success'] = "Deduction added successfully.";
+    } else {
+        $_SESSION['error'] = "Failed to add deduction. Please try again.";
+    }
+    header('Location: ../view/tax-categories.php');
+    exit;
+}

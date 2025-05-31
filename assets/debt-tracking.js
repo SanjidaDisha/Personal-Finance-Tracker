@@ -1,56 +1,66 @@
-// Navbar toggle
-    const hamburger = document.getElementById('hamburger');
-    const navLinks = document.getElementById('navLinks');
-    const icon = hamburger.querySelector('i');
-    hamburger.addEventListener('click', () => {
-      navLinks.classList.toggle('show');
-      icon.classList.toggle('fa-bars');
-      icon.classList.toggle('fa-times');
+document.addEventListener("DOMContentLoaded", () => {
+  fetchLoans();
+});
+
+function showScreen(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function validateLoanForm() {
+  const type = document.getElementById('loanName').value;
+  const amount = document.getElementById('loanAmount').value;
+  const apr = document.getElementById('loanRate').value;
+  if (!type || !amount || !apr) {
+    alert('Please fill in all fields.');
+    return false;
+  }
+  return true;
+}
+
+function fetchLoans() {
+  fetch('../controller/debt-trackingcontroller.php?action=fetch')
+    .then(res => res.json())
+    .then(data => {
+      const list = document.getElementById("loanList");
+      list.innerHTML = "";
+      data.forEach(loan => {
+        const div = document.createElement("div");
+        div.className = "loan-item";
+        div.innerHTML = `<strong>${loan.loan_type}</strong><br>
+                         Amount: $${loan.amount}<br>
+                         APR: ${loan.apr}%`;
+        list.appendChild(div);
+      });
     });
-    // Section switch
-    function showScreen(id) {
-      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-      document.getElementById(id).classList.add('active');
-    }
+}
 
-    // Loan functions
-    function addLoan() {
-      const name = document.getElementById('loanName').value.trim();
-      const amount = parseFloat(document.getElementById('loanAmount').value);
-      const rate = parseFloat(document.getElementById('loanRate').value);
-      if (name && amount > 0 && rate >= 0) {
-        const div = document.createElement('div');
-        div.className = 'loan-box';
-        div.textContent = `${name} – $${amount.toFixed(2)} @ ${rate}% APR`;
-        document.getElementById('loanList').appendChild(div);
-        ['loanName','loanAmount','loanRate'].forEach(id=>document.getElementById(id).value='');
-      }
-    }
+function calculatePayoff() {
+  const amount = parseFloat(document.getElementById('amount').value);
+  const rate = parseFloat(document.getElementById('rate').value) / 100 / 12;
+  const payment = parseFloat(document.getElementById('payment').value);
 
-    function calculatePayoff() {
-      const P = parseFloat(document.getElementById('amount').value);
-      const r = parseFloat(document.getElementById('rate').value)/100/12;
-      const m = parseFloat(document.getElementById('payment').value);
-      if (P>0 && r>0 && m>0) {
-        const months = Math.log(m/(m-P*r))/Math.log(1+r);
-        const years = months/12;
-        document.getElementById('payoffResult').textContent =
-          `~${Math.ceil(months)} months (${years.toFixed(1)} yrs)`;
-      } else {
-        document.getElementById('payoffResult').textContent = "Fill all fields correctly.";
-      }
-    }
+  if (!amount || !rate || !payment) {
+    alert("Fill in all fields.");
+    return;
+  }
 
-    function analyzeInterest() {
-      const loan = parseFloat(document.getElementById('iaAmount').value);
-      const apr = parseFloat(document.getElementById('iaRate').value)/100;
-      const years = parseFloat(document.getElementById('iaTerm').value);
-      if (loan>0 && apr>0 && years>0) {
-        const totalInterest = loan*apr*years;
-        const totalCost = loan+totalInterest;
-        document.getElementById('interestResult').textContent =
-          `Interest: $${totalInterest.toFixed(2)} | Total: $${totalCost.toFixed(2)}`;
-      } else {
-        document.getElementById('interestResult').textContent = "Enter valid values.";
-      }
-    }
+  const months = Math.ceil(Math.log(payment / (payment - amount * rate)) / Math.log(1 + rate));
+  const result = document.getElementById('payoffResult');
+  result.innerHTML = `Estimated payoff time: ${months} months.`;
+}
+
+function analyzeInterest() {
+  const amount = parseFloat(document.getElementById('iaAmount').value);
+  const rate = parseFloat(document.getElementById('iaRate').value) / 100;
+  const term = parseFloat(document.getElementById('iaTerm').value);
+
+  if (!amount || !rate || !term) {
+    alert("Fill in all fields.");
+    return;
+  }
+
+  const totalInterest = amount * rate * term;
+  const result = document.getElementById('interestResult');
+  result.innerHTML = `Estimated total interest: $${totalInterest.toFixed(2)}`;
+}
